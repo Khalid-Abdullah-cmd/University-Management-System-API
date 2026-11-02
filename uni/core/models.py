@@ -21,14 +21,10 @@ class Course(models.Model):
     professor =  models.ForeignKey(User, limit_choices_to={'role': User.Role.PROFESSOR}, null= True, blank=True, on_delete=models.SET_NULL)
     
     
-    
-    
     def __str__(self):
         return self.title
+
     
-
-     
-
 
 
 class Enrollment(models.Model):
