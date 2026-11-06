@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from .models import User
 from django.core.validators import RegexValidator
 from rest_framework.validators import UniqueValidator 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
+from .models import Course, Enrollment, User
+
 
 
 
@@ -63,3 +64,30 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 
+class CourseSerializer(serializers.ModelSerializer):
+
+
+    title = serializers.CharField(
+        max_length=150,
+        validators=[
+            RegexValidator(
+                regex=r"^[A-Za-z]+( [A-Za-z]+)*$",
+                message="Course title can only contain letters and single spaces.",
+            ),
+            UniqueValidator(queryset=User.objects.all(), lookup="iexact"),
+        ],
+    )
+
+    class Meta:
+
+        model = Course
+        fields = ['title', 'course_code', 'capacity', 'professor']
+
+
+    def validate_capacity(self, data):
+
+        if data['capacity'] < 0:
+              
+              raise serializers.ValidationError("Course capacity should be a Positive Integer or a 0")
+             
+          
